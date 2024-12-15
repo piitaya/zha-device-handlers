@@ -134,45 +134,6 @@ class LegrandCableOutletCluster(CustomCluster):
         return await super().write_attributes(attrs, manufacturer)
 
 
-class LegrandPowerCluster(CustomCluster):
-    """Legrand Pilot Wire manufacturer-specific cluster."""
-
-    cluster_id = 0xFC40
-    name = "Legrand Pilot Wire"
-    ep_attribute = "legrand_wire_pilot"
-
-    class AttributeDefs(BaseAttributeDefs):
-        """Attribute definitions for LegrandCableOutletCluster."""
-
-        pilot_wire_mode = ZCLAttributeDef(
-            id=0x00,
-            type=PilotWireMode,
-            is_manufacturer_specific=True,
-        )
-
-    class ServerCommandDefs(BaseCommandDefs):
-        """Server command definitions."""
-
-        set_pilot_wire_mode = ZCLCommandDef(
-            id=0x00,
-            schema={"mode": PilotWireMode},
-            is_manufacturer_specific=True,
-        )
-
-    async def write_attributes(self, attributes, manufacturer=None):
-        """Write attributes to the cluster."""
-
-        attrs = {}
-        for attr, value in attributes.items():
-            attr_def = self.find_attribute(attr)
-            if attr_def == LegrandCableOutletCluster.AttributeDefs.pilot_wire_mode:
-                await self.set_pilot_wire_mode(value, manufacturer=manufacturer)
-                await super().read_attributes([attr], manufacturer=manufacturer)
-            else:
-                attrs[attr] = value
-        return await super().write_attributes(attrs, manufacturer)
-
-
 (
     QuirkBuilder(f" {LEGRAND}", " Cable outlet")
     .replaces(LegrandCluster)

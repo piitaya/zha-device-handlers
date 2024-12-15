@@ -3,7 +3,6 @@
 from zigpy.quirks import CustomCluster
 from zigpy.quirks.v2 import EntityType, QuirkBuilder
 import zigpy.types as t
-from zigpy.zcl import ClusterType
 from zigpy.zcl.foundation import (
     BaseAttributeDefs,
     BaseCommandDefs,
@@ -18,9 +17,9 @@ DEVICE_MODE_WIRE_PILOT_OFF = [0x01, 0x00]
 
 
 class DeviceMode(t.enum8):
-    """Heat mode."""
+    """Device mode."""
 
-    On_off = 0x00
+    Switch = 0x00
     Wire_pilot = 0x01
 
 
@@ -78,15 +77,15 @@ class LegrandCluster(CustomCluster):
             mode = (
                 DeviceMode.Wire_pilot
                 if value == DEVICE_MODE_WIRE_PILOT_ON
-                else DeviceMode.On_off
+                else DeviceMode.Switch
             )
-            self._update_attribute(
+            super()._update_attribute(
                 LegrandCluster.AttributeDefs.device_mode_enum.id, mode
             )
 
 
-class HeatMode(t.enum8):
-    """Heat mode."""
+class WirePilotMode(t.enum8):
+    """Wire pilot mode."""
 
     Comfort = 0x00
     Comfort_minus_1 = 0x01
@@ -106,18 +105,18 @@ class LegrandWirePilotCluster(CustomCluster):
     class AttributeDefs(BaseAttributeDefs):
         """Attribute definitions for LegrandWirePilotCluster."""
 
-        heat_mode = ZCLAttributeDef(
+        wire_pilot_mode = ZCLAttributeDef(
             id=0x00,
-            type=HeatMode,
+            type=WirePilotMode,
             is_manufacturer_specific=True,
         )
 
     class ServerCommandDefs(BaseCommandDefs):
         """Server command definitions."""
 
-        set_heat_mode = ZCLCommandDef(
+        set_wire_pilot_mode = ZCLCommandDef(
             id=0x00,
-            schema={"mode": HeatMode},
+            schema={"mode": WirePilotMode},
             is_manufacturer_specific=True,
         )
 
@@ -127,9 +126,48 @@ class LegrandWirePilotCluster(CustomCluster):
         attrs = {}
         for attr, value in attributes.items():
             attr_def = self.find_attribute(attr)
-            if attr_def == LegrandWirePilotCluster.AttributeDefs.heat_mode:
-                await self.set_heat_mode(value, manufacturer=manufacturer)
-                self.read_attributes([attr], manufacturer=manufacturer)
+            if attr_def == LegrandWirePilotCluster.AttributeDefs.wire_pilot_mode:
+                await self.set_wire_pilot_mode(value, manufacturer=manufacturer)
+                await super().read_attributes([attr], manufacturer=manufacturer)
+            else:
+                attrs[attr] = value
+        return await super().write_attributes(attrs, manufacturer)
+
+
+class LegrandPowerCluster(CustomCluster):
+    """Legrand wire pilot manufacturer-specific cluster."""
+
+    cluster_id = 0xFC40
+    name = "Legrand Wire Pilot"
+    ep_attribute = "legrand_wire_pilot"
+
+    class AttributeDefs(BaseAttributeDefs):
+        """Attribute definitions for LegrandWirePilotCluster."""
+
+        wire_pilot_mode = ZCLAttributeDef(
+            id=0x00,
+            type=WirePilotMode,
+            is_manufacturer_specific=True,
+        )
+
+    class ServerCommandDefs(BaseCommandDefs):
+        """Server command definitions."""
+
+        set_wire_pilot_mode = ZCLCommandDef(
+            id=0x00,
+            schema={"mode": WirePilotMode},
+            is_manufacturer_specific=True,
+        )
+
+    async def write_attributes(self, attributes, manufacturer=None):
+        """Write attributes to the cluster."""
+
+        attrs = {}
+        for attr, value in attributes.items():
+            attr_def = self.find_attribute(attr)
+            if attr_def == LegrandWirePilotCluster.AttributeDefs.wire_pilot_mode:
+                await self.set_wire_pilot_mode(value, manufacturer=manufacturer)
+                await super().read_attributes([attr], manufacturer=manufacturer)
             else:
                 attrs[attr] = value
         return await super().write_attributes(attrs, manufacturer)
@@ -139,7 +177,6 @@ class LegrandWirePilotCluster(CustomCluster):
     QuirkBuilder(f" {LEGRAND}", " Cable outlet")
     .replaces(LegrandCluster)
     .replaces(LegrandWirePilotCluster)
-    .replaces(LegrandCluster, cluster_type=ClusterType.Client)
     .enum(
         attribute_name=LegrandCluster.AttributeDefs.device_mode_enum.name,
         cluster_id=LegrandCluster.cluster_id,
@@ -148,11 +185,11 @@ class LegrandWirePilotCluster(CustomCluster):
         fallback_name="Device mode",
     )
     .enum(
-        attribute_name=LegrandWirePilotCluster.AttributeDefs.heat_mode.name,
+        attribute_name=LegrandWirePilotCluster.AttributeDefs.wire_pilot_mode.name,
         cluster_id=LegrandWirePilotCluster.cluster_id,
-        enum_class=HeatMode,
-        translation_key="heat_mode",
-        fallback_name="Heat mode",
+        enum_class=WirePilotMode,
+        translation_key="wire_pilot_mode",
+        fallback_name="Wire pilot mode",
         entity_type=EntityType.STANDARD,
     )
     .add_to_registry()

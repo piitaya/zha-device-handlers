@@ -84,8 +84,8 @@ class LegrandCluster(CustomCluster):
             )
 
 
-class WirePilotMode(t.enum8):
-    """Wire pilot mode."""
+class PilotWireMode(t.enum8):
+    """Pilot Wire mode."""
 
     Comfort = 0x00
     Comfort_minus_1 = 0x01
@@ -96,27 +96,27 @@ class WirePilotMode(t.enum8):
 
 
 class LegrandCableOutletCluster(CustomCluster):
-    """Legrand wire pilot manufacturer-specific cluster."""
+    """Legrand Cable Outlet manufacturer-specific cluster."""
 
     cluster_id = 0xFC40
-    name = "Legrand Wire Pilot"
-    ep_attribute = "legrand_wire_pilot"
+    name = "Legrand Cable Outlet"
+    ep_attribute = "legrand_cable_outlet_cluster"
 
     class AttributeDefs(BaseAttributeDefs):
         """Attribute definitions for LegrandCableOutletCluster."""
 
-        wire_pilot_mode = ZCLAttributeDef(
+        pilot_wire_mode = ZCLAttributeDef(
             id=0x00,
-            type=WirePilotMode,
+            type=PilotWireMode,
             is_manufacturer_specific=True,
         )
 
     class ServerCommandDefs(BaseCommandDefs):
         """Server command definitions."""
 
-        set_wire_pilot_mode = ZCLCommandDef(
+        set_pilot_wire_mode = ZCLCommandDef(
             id=0x00,
-            schema={"mode": WirePilotMode},
+            schema={"mode": PilotWireMode},
             is_manufacturer_specific=True,
         )
 
@@ -126,8 +126,8 @@ class LegrandCableOutletCluster(CustomCluster):
         attrs = {}
         for attr, value in attributes.items():
             attr_def = self.find_attribute(attr)
-            if attr_def == LegrandCableOutletCluster.AttributeDefs.wire_pilot_mode:
-                await self.set_wire_pilot_mode(value, manufacturer=manufacturer)
+            if attr_def == LegrandCableOutletCluster.AttributeDefs.pilot_wire_mode:
+                await self.set_pilot_wire_mode(value, manufacturer=manufacturer)
                 await super().read_attributes([attr], manufacturer=manufacturer)
             else:
                 attrs[attr] = value
@@ -135,27 +135,27 @@ class LegrandCableOutletCluster(CustomCluster):
 
 
 class LegrandPowerCluster(CustomCluster):
-    """Legrand wire pilot manufacturer-specific cluster."""
+    """Legrand Pilot Wire manufacturer-specific cluster."""
 
     cluster_id = 0xFC40
-    name = "Legrand Wire Pilot"
+    name = "Legrand Pilot Wire"
     ep_attribute = "legrand_wire_pilot"
 
     class AttributeDefs(BaseAttributeDefs):
         """Attribute definitions for LegrandCableOutletCluster."""
 
-        wire_pilot_mode = ZCLAttributeDef(
+        pilot_wire_mode = ZCLAttributeDef(
             id=0x00,
-            type=WirePilotMode,
+            type=PilotWireMode,
             is_manufacturer_specific=True,
         )
 
     class ServerCommandDefs(BaseCommandDefs):
         """Server command definitions."""
 
-        set_wire_pilot_mode = ZCLCommandDef(
+        set_pilot_wire_mode = ZCLCommandDef(
             id=0x00,
-            schema={"mode": WirePilotMode},
+            schema={"mode": PilotWireMode},
             is_manufacturer_specific=True,
         )
 
@@ -165,8 +165,8 @@ class LegrandPowerCluster(CustomCluster):
         attrs = {}
         for attr, value in attributes.items():
             attr_def = self.find_attribute(attr)
-            if attr_def == LegrandCableOutletCluster.AttributeDefs.wire_pilot_mode:
-                await self.set_wire_pilot_mode(value, manufacturer=manufacturer)
+            if attr_def == LegrandCableOutletCluster.AttributeDefs.pilot_wire_mode:
+                await self.set_pilot_wire_mode(value, manufacturer=manufacturer)
                 await super().read_attributes([attr], manufacturer=manufacturer)
             else:
                 attrs[attr] = value
@@ -185,11 +185,11 @@ class LegrandPowerCluster(CustomCluster):
         fallback_name="Device mode",
     )
     .enum(
-        attribute_name=LegrandCableOutletCluster.AttributeDefs.wire_pilot_mode.name,
+        attribute_name=LegrandCableOutletCluster.AttributeDefs.pilot_wire_mode.name,
         cluster_id=LegrandCableOutletCluster.cluster_id,
-        enum_class=WirePilotMode,
-        translation_key="wire_pilot_mode",
-        fallback_name="Wire pilot mode",
+        enum_class=PilotWireMode,
+        translation_key="pilot_wire_mode",
+        fallback_name="Pilot Wire mode",
         entity_type=EntityType.STANDARD,
     )
     .add_to_registry()

@@ -95,7 +95,7 @@ class WirePilotMode(t.enum8):
     Off = 0x05
 
 
-class LegrandWirePilotCluster(CustomCluster):
+class LegrandCableOutletCluster(CustomCluster):
     """Legrand wire pilot manufacturer-specific cluster."""
 
     cluster_id = 0xFC40
@@ -103,7 +103,7 @@ class LegrandWirePilotCluster(CustomCluster):
     ep_attribute = "legrand_wire_pilot"
 
     class AttributeDefs(BaseAttributeDefs):
-        """Attribute definitions for LegrandWirePilotCluster."""
+        """Attribute definitions for LegrandCableOutletCluster."""
 
         wire_pilot_mode = ZCLAttributeDef(
             id=0x00,
@@ -126,7 +126,7 @@ class LegrandWirePilotCluster(CustomCluster):
         attrs = {}
         for attr, value in attributes.items():
             attr_def = self.find_attribute(attr)
-            if attr_def == LegrandWirePilotCluster.AttributeDefs.wire_pilot_mode:
+            if attr_def == LegrandCableOutletCluster.AttributeDefs.wire_pilot_mode:
                 await self.set_wire_pilot_mode(value, manufacturer=manufacturer)
                 await super().read_attributes([attr], manufacturer=manufacturer)
             else:
@@ -142,7 +142,7 @@ class LegrandPowerCluster(CustomCluster):
     ep_attribute = "legrand_wire_pilot"
 
     class AttributeDefs(BaseAttributeDefs):
-        """Attribute definitions for LegrandWirePilotCluster."""
+        """Attribute definitions for LegrandCableOutletCluster."""
 
         wire_pilot_mode = ZCLAttributeDef(
             id=0x00,
@@ -165,7 +165,7 @@ class LegrandPowerCluster(CustomCluster):
         attrs = {}
         for attr, value in attributes.items():
             attr_def = self.find_attribute(attr)
-            if attr_def == LegrandWirePilotCluster.AttributeDefs.wire_pilot_mode:
+            if attr_def == LegrandCableOutletCluster.AttributeDefs.wire_pilot_mode:
                 await self.set_wire_pilot_mode(value, manufacturer=manufacturer)
                 await super().read_attributes([attr], manufacturer=manufacturer)
             else:
@@ -176,7 +176,7 @@ class LegrandPowerCluster(CustomCluster):
 (
     QuirkBuilder(f" {LEGRAND}", " Cable outlet")
     .replaces(LegrandCluster)
-    .replaces(LegrandWirePilotCluster)
+    .replaces(LegrandCableOutletCluster)
     .enum(
         attribute_name=LegrandCluster.AttributeDefs.device_mode_enum.name,
         cluster_id=LegrandCluster.cluster_id,
@@ -185,8 +185,8 @@ class LegrandPowerCluster(CustomCluster):
         fallback_name="Device mode",
     )
     .enum(
-        attribute_name=LegrandWirePilotCluster.AttributeDefs.wire_pilot_mode.name,
-        cluster_id=LegrandWirePilotCluster.cluster_id,
+        attribute_name=LegrandCableOutletCluster.AttributeDefs.wire_pilot_mode.name,
+        cluster_id=LegrandCableOutletCluster.cluster_id,
         enum_class=WirePilotMode,
         translation_key="wire_pilot_mode",
         fallback_name="Wire pilot mode",

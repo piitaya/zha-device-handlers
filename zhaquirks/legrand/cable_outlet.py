@@ -20,7 +20,7 @@ class DeviceMode(t.enum8):
     """Device mode."""
 
     Switch = 0x00
-    Wire_pilot = 0x01
+    Pilot_wire = 0x01
 
 
 class LegrandCluster(CustomCluster):
@@ -63,7 +63,7 @@ class LegrandCluster(CustomCluster):
             if attr_def == LegrandCluster.AttributeDefs.device_mode_enum:
                 mode = (
                     DEVICE_MODE_WIRE_PILOT_ON
-                    if value == DeviceMode.Wire_pilot
+                    if value == DeviceMode.Pilot_wire
                     else DEVICE_MODE_WIRE_PILOT_OFF
                 )
                 attrs[LegrandCluster.AttributeDefs.device_mode.id] = mode
@@ -75,7 +75,7 @@ class LegrandCluster(CustomCluster):
         super()._update_attribute(attrid, value)
         if attrid == LegrandCluster.AttributeDefs.device_mode.id:
             mode = (
-                DeviceMode.Wire_pilot
+                DeviceMode.Pilot_wire
                 if value == DEVICE_MODE_WIRE_PILOT_ON
                 else DeviceMode.Switch
             )

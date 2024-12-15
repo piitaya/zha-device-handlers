@@ -87,8 +87,8 @@ async def test_legrand_wire_pilot_cluster_write_attrs(zigpy_device_from_v2_quirk
     "attr, value, expected_attr, expected_value",
     [
         # Wire pilot mode attribute
-        (0x4000, False, 0x0000, [1, 0]),
-        (0x4000, True, 0x0000, [2, 0]),
+        (0x4000, 0x00, 0x0000, [1, 0]),
+        (0x4000, 0x01, 0x0000, [2, 0]),
         # Other attributes
         (0x0001, False, 0x0001, False),
         (0x0002, True, 0x0002, True),

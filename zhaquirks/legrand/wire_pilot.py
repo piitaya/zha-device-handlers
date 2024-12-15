@@ -62,11 +62,12 @@ class LegrandCluster(CustomCluster):
         for attr, value in attributes.items():
             attr_def = self.find_attribute(attr)
             if attr_def == LegrandCluster.AttributeDefs.device_mode_enum:
-                attrs[LegrandCluster.AttributeDefs.device_mode.id] = (
+                mode = (
                     DEVICE_MODE_WIRE_PILOT_ON
                     if value == DeviceMode.Wire_pilot
                     else DEVICE_MODE_WIRE_PILOT_OFF
                 )
+                attrs[LegrandCluster.AttributeDefs.device_mode.id] = mode
             else:
                 attrs[attr] = value
         return await super().write_attributes(attrs, manufacturer)
@@ -74,11 +75,13 @@ class LegrandCluster(CustomCluster):
     def _update_attribute(self, attrid, value) -> None:
         super()._update_attribute(attrid, value)
         if attrid == LegrandCluster.AttributeDefs.device_mode.id:
-            self._update_attribute(
-                LegrandCluster.AttributeDefs.device_mode_enum.id,
+            mode = (
                 DeviceMode.Wire_pilot
                 if value == DEVICE_MODE_WIRE_PILOT_ON
-                else DeviceMode.On_off,
+                else DeviceMode.On_off
+            )
+            self._update_attribute(
+                LegrandCluster.AttributeDefs.device_mode_enum.id, mode
             )
 
 

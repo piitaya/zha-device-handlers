@@ -25,7 +25,7 @@ class LegrandCluster(CustomCluster):
     """LegrandCluster."""
 
     cluster_id = MANUFACTURER_SPECIFIC_CLUSTER_ID
-    name = "Legrand"
+    name = "LegrandCluster"
     ep_attribute = "legrand_cluster"
 
     class AttributeDefs(BaseAttributeDefs):

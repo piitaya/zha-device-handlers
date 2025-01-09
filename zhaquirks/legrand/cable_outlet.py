@@ -6,21 +6,19 @@ import zigpy.types as t
 from zigpy.zcl.foundation import (
     BaseAttributeDefs,
     BaseCommandDefs,
+    DataTypeId,
     ZCLAttributeDef,
     ZCLCommandDef,
 )
 
 from zhaquirks.legrand import LEGRAND, MANUFACTURER_SPECIFIC_CLUSTER_ID
 
-DEVICE_MODE_WIRE_PILOT_ON = [0x02, 0x00]
-DEVICE_MODE_WIRE_PILOT_OFF = [0x01, 0x00]
 
-
-class DeviceMode(t.enum8):
+class DeviceMode(t.enum16):
     """Device mode."""
 
-    Switch = 0x00
-    Pilot_wire = 0x01
+    Switch = 0x0001
+    Pilot_wire = 0x0002
 
 
 class LegrandCluster(CustomCluster):
@@ -35,7 +33,8 @@ class LegrandCluster(CustomCluster):
 
         device_mode = ZCLAttributeDef(
             id=0x0000,
-            type=t.data16,
+            type=DeviceMode,
+            zcl_type=DataTypeId.data16,
             is_manufacturer_specific=True,
         )
         led_dark = ZCLAttributeDef(
@@ -48,40 +47,6 @@ class LegrandCluster(CustomCluster):
             type=t.Bool,
             is_manufacturer_specific=True,
         )
-        device_mode_enum = ZCLAttributeDef(
-            id=0x4000,
-            type=t.enum8,
-            is_manufacturer_specific=True,
-        )
-
-    async def write_attributes(self, attributes, manufacturer=None):
-        """Write attributes to the cluster."""
-
-        attrs = {}
-        for attr, value in attributes.items():
-            attr_def = self.find_attribute(attr)
-            if attr_def == LegrandCluster.AttributeDefs.device_mode_enum:
-                mode = (
-                    DEVICE_MODE_WIRE_PILOT_ON
-                    if value == DeviceMode.Pilot_wire
-                    else DEVICE_MODE_WIRE_PILOT_OFF
-                )
-                attrs[LegrandCluster.AttributeDefs.device_mode.id] = mode
-            else:
-                attrs[attr] = value
-        return await super().write_attributes(attrs, manufacturer)
-
-    def _update_attribute(self, attrid, value) -> None:
-        super()._update_attribute(attrid, value)
-        if attrid == LegrandCluster.AttributeDefs.device_mode.id:
-            mode = (
-                DeviceMode.Pilot_wire
-                if value == DEVICE_MODE_WIRE_PILOT_ON
-                else DeviceMode.Switch
-            )
-            super()._update_attribute(
-                LegrandCluster.AttributeDefs.device_mode_enum.id, mode
-            )
 
 
 class PilotWireMode(t.enum8):
@@ -139,11 +104,18 @@ class LegrandCableOutletCluster(CustomCluster):
     .replaces(LegrandCluster)
     .replaces(LegrandCableOutletCluster)
     .enum(
-        attribute_name=LegrandCluster.AttributeDefs.device_mode_enum.name,
+        attribute_name=LegrandCluster.AttributeDefs.device_mode.name,
         cluster_id=LegrandCluster.cluster_id,
         enum_class=DeviceMode,
-        translation_key="device_mode",
+        translation_key="legrand_cable_outlet_device_mode",
         fallback_name="Device mode",
+    )
+    .enum(
+        attribute_name=LegrandCableOutletCluster.AttributeDefs.pilot_wire_mode.name,
+        cluster_id=LegrandCableOutletCluster.cluster_id,
+        enum_class=PilotWireMode,
+        translation_key="legrand_cable_outlet_pilot_wire_mode",
+        fallback_name="Pilot Wire mode",
     )
     .add_to_registry()
 )

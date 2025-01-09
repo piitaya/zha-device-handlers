@@ -18,7 +18,7 @@ class DeviceMode(t.enum16):
     """Device mode."""
 
     Switch = 0x0001
-    Pilot_wire = 0x0002
+    PilotWire = 0x0002
 
 
 class LegrandCluster(CustomCluster):
@@ -53,10 +53,10 @@ class PilotWireMode(t.enum8):
     """Pilot Wire mode."""
 
     Comfort = 0x00
-    Comfort_minus_1 = 0x01
-    Comfort_minus_2 = 0x02
+    ComfortMinus1 = 0x01
+    ComfortMinus2 = 0x02
     Eco = 0x03
-    Frost_protection = 0x04
+    FrostProtection = 0x04
     Off = 0x05
 
 

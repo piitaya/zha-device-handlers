@@ -1,7 +1,7 @@
 """Module for Legrand Cable Outlet with pilot wire functionality."""
 
 from zigpy.quirks import CustomCluster
-from zigpy.quirks.v2 import EntityType, QuirkBuilder
+from zigpy.quirks.v2 import QuirkBuilder
 import zigpy.types as t
 from zigpy.zcl.foundation import (
     BaseAttributeDefs,
@@ -103,20 +103,5 @@ class LegrandCableOutletCluster(CustomCluster):
     QuirkBuilder(f" {LEGRAND}", " Cable outlet")
     .replaces(LegrandCluster)
     .replaces(LegrandCableOutletCluster)
-    .enum(
-        attribute_name=LegrandCluster.AttributeDefs.device_mode.name,
-        cluster_id=LegrandCluster.cluster_id,
-        enum_class=DeviceMode,
-        translation_key="legrand_cable_outlet_device_mode",
-        fallback_name="Device mode",
-    )
-    .enum(
-        attribute_name=LegrandCableOutletCluster.AttributeDefs.pilot_wire_mode.name,
-        cluster_id=LegrandCableOutletCluster.cluster_id,
-        enum_class=PilotWireMode,
-        translation_key="legrand_cable_outlet_pilot_wire_mode",
-        fallback_name="Pilot Wire mode",
-        entity_type=EntityType.STANDARD,
-    )
     .add_to_registry()
 )

@@ -1,5 +1,7 @@
 """Module for Legrand Cable Outlet with pilot wire functionality."""
 
+from typing import Any
+
 from zigpy.quirks import CustomCluster
 from zigpy.quirks.v2 import QuirkBuilder
 import zigpy.types as t
@@ -85,7 +87,12 @@ class LegrandCableOutletCluster(CustomCluster):
             is_manufacturer_specific=True,
         )
 
-    async def write_attributes(self, attributes, manufacturer=None):
+    async def write_attributes(
+        self,
+        attributes: dict[str | int, Any],
+        manufacturer: int | None = None,
+        **kwargs,
+    ) -> list:
         """Write attributes to the cluster."""
 
         attrs = {}

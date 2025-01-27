@@ -101,8 +101,6 @@ class LegrandCableOutletCluster(CustomCluster):
             if attr_def == LegrandCableOutletCluster.AttributeDefs.pilot_wire_mode:
                 await self.set_pilot_wire_mode(value, manufacturer=manufacturer)
                 await super().read_attributes([attr], manufacturer=manufacturer)
-            else:
-                attrs[attr] = value
         return await super().write_attributes(attrs, manufacturer)
 
 

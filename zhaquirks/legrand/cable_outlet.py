@@ -112,7 +112,7 @@ class LegrandCableOutletCluster(CustomCluster):
         attribute_name=LegrandCluster.AttributeDefs.device_mode.name,
         cluster_id=LegrandCluster.cluster_id,
         enum_class=DeviceMode,
-        translation_key="legrand_device_mode",
+        translation_key="device_mode",
         fallback_name="Device mode",
     )
     .enum(

@@ -120,7 +120,7 @@ class LegrandCableOutletCluster(CustomCluster):
         cluster_id=LegrandCableOutletCluster.cluster_id,
         enum_class=PilotWireMode,
         translation_key="pilot_wire_mode",
-        fallback_name="Pilot Wire mode",
+        fallback_name="Pilot wire mode",
         entity_type=EntityType.STANDARD,
     )
     .add_to_registry()

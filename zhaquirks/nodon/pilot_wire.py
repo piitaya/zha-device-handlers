@@ -62,7 +62,7 @@ nodon = (
         cluster_id=NodOnPilotWireCluster.cluster_id,
         entity_type=EntityType.STANDARD,
         translation_key="pilot_wire_mode",
-        fallback_name="Pilot Wire mode",
+        fallback_name="Pilot wire mode",
     )
 )  # fmt: skip
 
